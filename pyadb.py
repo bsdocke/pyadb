@@ -55,15 +55,14 @@ def back():
     _call_subprocess_with_no_window("{0} shell input keyevent 4".format(_ADB_LOCATION))
 
 
-def screencap():
-    _call_subprocess_with_no_window(
+def screencap(target_uri=None):
+    if target_uri == None:
+         _call_subprocess_with_no_window(
         "{0} shell screencap -p {1}screen.png".format(_ADB_LOCATION, _DEVICE_STORAGE_DIRECTORY))
-
-
-def screencap(target_uri):
-    screencap()
-    _call_subprocess_with_no_window(
-        "{0} pull {1}screen.png {2}".format(_ADB_LOCATION, _DEVICE_STORAGE_DIRECTORY, target_uri))
+    else:
+        screencap()
+        _call_subprocess_with_no_window(
+            "{0} pull {1}screen.png {2}".format(_ADB_LOCATION, _DEVICE_STORAGE_DIRECTORY, target_uri))
 
 
 def get_layout_xml():
