@@ -53,14 +53,12 @@ def tap(tap_x, tap_y, device_identifier=None):
 
 
 def back(device_id=None):
-    if device_id is None:
-        _call_subprocess_with_no_window(_get_input_key_event_string(4))
-    else:
-        _call_subprocess_with_no_window(_get_input_key_event_string(4), device_id)
+    _call_subprocess_with_no_window(_get_input_key_event_string(4), device_id)
 
 
-def home():
-    _call_subprocess_with_no_window(_get_input_key_event_string(3))
+def home(device_id=None):
+
+    _call_subprocess_with_no_window(_get_input_key_event_string(3), device_id)
 
 
 def _get_input_key_event_string(keycode,device_id=None):
