@@ -53,7 +53,7 @@ def tap(tap_x, tap_y, device_identifier=None):
 
 
 def back(device_id=None):
-    _call_subprocess_with_no_window(_get_input_key_event_string(4), device_id)
+    _call_subprocess_with_no_window(_get_input_key_event_string(4, device_id))
 
 
 def home(device_id=None):
@@ -121,17 +121,22 @@ def dump_layout_xml_to_file(target_uri, device_identifier=None):
 
 
 def get_current_activity(device_id=None):
-    if device_id is None:
+    return _get_current_activity_string(device_id).split(".")[-1]
+
+def get_fully_qualified_current_activity(device_id=None):
+    return _get_current_activity_string(device_id=None)
+
+def _get_current_activity_string(device_id=None):
+     if device_id is None:
         dumpsys_output = str(_call_subprocess_with_no_window("{0} shell dumpsys activity".format(_ADB_LOCATION)))
-    else:
+     else:
         dumpsys_output = str(
             _call_subprocess_with_no_window("{0} -s {1} shell dumpsys activity".format(_ADB_LOCATION, device_id)))
-    for line in dumpsys_output.split("\\r\\r\\n"):
+     for line in dumpsys_output.split("\\r\\r\\n"):
         stripped_line = line.rstrip().lstrip()
 
         if "Run #" in stripped_line:
-            return stripped_line.split("/")[1].split(" ")[0].split(".")[-1]
-
+            return stripped_line.split("/")[1].split(" ")[0]
 
 def _call_subprocess_with_no_window(command_to_call):
     try:
