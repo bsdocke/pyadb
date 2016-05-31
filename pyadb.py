@@ -132,11 +132,34 @@ def _get_current_activity_string(device_id=None):
      else:
         dumpsys_output = str(
             _call_subprocess_with_no_window("{0} -s {1} shell dumpsys activity".format(_ADB_LOCATION, device_id)))
+     dumpsys_output = dumpsys_output.split("Running activities")[-1]
      for line in dumpsys_output.split("\\r\\r\\n"):
         stripped_line = line.rstrip().lstrip()
 
         if "Run #" in stripped_line:
             return stripped_line.split("/")[1].split(" ")[0]
+
+def kill_current_application(device_id=None):
+    _call_subprocess_with_no_window("{0} -s {1} shell am force-stop {2}".format(_ADB_LOCATION, device_id, get_current_application_package(device_id)))
+
+def kill_application(application_name, device_id=None):
+    _call_subprocess_with_no_window("{0} -s {1} shell am force-stop {2}".format(_ADB_LOCATION, device_id, application_name))
+
+def launch_application(application_name, device_id=None):
+    if device_id is None:
+        _call_subprocess_with_no_window("{0} shell monkey -p {2} 1".format(_ADB_LOCATION, application_name))
+    else:
+        _call_subprocess_with_no_window("{0} -s {1} shell monkey -p {2} 1".format(_ADB_LOCATION, device_id, application_name))
+
+
+def get_current_application_package(device_id=None):
+     if device_id is None:
+        dumpsys_output = str(_call_subprocess_with_no_window("{0} shell dumpsys window windows".format(_ADB_LOCATION)))
+     else:
+        dumpsys_output = str(
+            _call_subprocess_with_no_window("{0} -s {1} shell dumpsys window windows".format(_ADB_LOCATION, device_id)))
+     return dumpsys_output.split("mCurrentFocus")[-1].split("/")[0].split(" ")[-1]
+
 
 def _call_subprocess_with_no_window(command_to_call):
     try:
