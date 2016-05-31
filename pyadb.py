@@ -113,11 +113,9 @@ def dump_layout_xml_to_file(target_uri, device_identifier=None):
     else:
         _call_subprocess_with_no_window(
             "{0} -s {1} shell uiautomator dump --verbose".format(_ADB_LOCATION, device_identifier))
-        print("Layout XML dumped in device")
         _call_subprocess_with_no_window(
             "{0} -s {1} pull {2}window_dump.xml {3}".format(_ADB_LOCATION, device_identifier, _DEVICE_STORAGE_DIRECTORY,
                                                             target_uri))
-        print("Layout XML pulled from device")
 
 
 def get_current_activity(device_id=None):
