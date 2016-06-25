@@ -3,6 +3,7 @@ __author__ = 'Brandon Dockery'
 import os
 import subprocess
 import codecs
+import random
 
 _DEFAULT_UI_DUMP_FILEPATH = "windowdump.xml"
 _DEVICE_STORAGE_DIRECTORY = "/storage/emulated/legacy/"
@@ -52,6 +53,34 @@ def tap(tap_x, tap_y, device_identifier=None):
                                                         str(tap_y)))
 
 
+def get_coordinates_of_element_from_text(layout_string, target):
+    index_of_close_btn = layout_string.index(target)
+
+    while layout_string[index_of_close_btn] != '[':
+        index_of_close_btn += 1
+
+    index_of_close_btn += 1
+    start_pos = ""
+    while layout_string[index_of_close_btn] != ']':
+        start_pos = start_pos + layout_string[index_of_close_btn]
+        index_of_close_btn += 1
+
+    index_of_close_btn += 2
+
+    end_pos = ""
+    while layout_string[index_of_close_btn] != ']':
+        end_pos += layout_string[index_of_close_btn]
+        index_of_close_btn += 1
+
+    pos_upper_left = start_pos.split(",")
+    pos_lower_right = end_pos.split(",")
+
+    click_x = int(random.randint(int(pos_upper_left[0]),int(pos_lower_right[0])))
+    click_y = int(random.randint(int(pos_upper_left[1]),int(pos_lower_right[1])))
+
+    return [click_x, click_y]
+
+
 def back(device_id=None):
     _call_subprocess_with_no_window(_get_input_key_event_string(4, device_id))
 
@@ -96,12 +125,12 @@ def get_layout_xml(device_identifier=None):
         os.remove(_DEFAULT_UI_DUMP_FILEPATH)
         return dump_contents
     else:
-        dump_layout_xml_to_file(_DEFAULT_UI_DUMP_FILEPATH, device_identifier)
+        dump_layout_xml_to_file(device_identifier+ "_" +_DEFAULT_UI_DUMP_FILEPATH, device_identifier)
         # dump_file = open(_DEFAULT_UI_DUMP_FILEPATH, 'r')
-        dump_file = codecs.open(_DEFAULT_UI_DUMP_FILEPATH, 'r', 'utf-8')  # dump_file.read().decode("utf-8")
+        dump_file = codecs.open(device_identifier + "_" + _DEFAULT_UI_DUMP_FILEPATH, 'r', 'utf-8')  # dump_file.read().decode("utf-8")
         dump_contents = dump_file.read()
         dump_file.close()
-        os.remove(_DEFAULT_UI_DUMP_FILEPATH)
+        os.remove(device_identifier + "_" + _DEFAULT_UI_DUMP_FILEPATH)
         return dump_contents
 
 
