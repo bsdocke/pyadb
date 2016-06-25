@@ -1,6 +1,7 @@
 import os
 import subprocess
 import random
+import traceback
 
 __author__ = 'Brandon Dockery'
 
@@ -218,6 +219,4 @@ def _call_subprocess_with_no_window(command_to_call):
     try:
         return subprocess.check_output(command_to_call, stderr=_FNULL, shell=False, startupinfo=_startupinfo)
     except subprocess.CalledProcessError:
-        print(
-            "Lost connection to the device. Please reconnect and run adb tcpip 5555, disconnect," +
-            " then run adb connect <IP ADDRESS>")
+        traceback.print_exc()
