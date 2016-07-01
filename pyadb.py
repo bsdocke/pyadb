@@ -1,6 +1,6 @@
 import os
-import subprocess
 import random
+import subprocess
 import traceback
 
 __author__ = 'Brandon Dockery'
@@ -213,6 +213,13 @@ def get_current_application_package(device_id=None):
             _call_subprocess_with_no_window("{0} -s {1} shell dumpsys window windows".format(_get_adb_location(),
                                                                                              device_id)))
     return dumpsys_output.split("mCurrentFocus")[-1].split("/")[0].split(" ")[-1]
+
+
+def get_connected_devices():
+    dumpsys_output = str(_call_subprocess_with_no_window("{0} devices".format(_get_adb_location())))
+    dumplines = filter(lambda x: "device" in x, dumpsys_output.split("\\r\\n")[1:])
+    return list(map(lambda x: x.split("\\t")[0].rstrip().lstrip(), dumplines))
+
 
 
 def _call_subprocess_with_no_window(command_to_call):
