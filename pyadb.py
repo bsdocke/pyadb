@@ -49,35 +49,6 @@ def set_device_storage_directory(folder_name):
     global _DEVICE_STORAGE_DIRECTORY
     _DEVICE_STORAGE_DIRECTORY = folder_name
 
-'''
-Simulates a finger swipe on the specified device, from one point to another over a given duration in milliseconds
-'''
-def swipe(start_x, start_y, end_x, end_y, duration=500, device_identifier=None):
-    if device_identifier is None:
-        _call_subprocess_with_no_window(
-            "{0} shell input swipe {1} {2} {3} {4} {5}".format(_get_adb_location(), str(start_x),
-                                                               str(start_y), str(end_x),
-                                                               str(end_y), duration))
-    else:
-        _call_subprocess_with_no_window(
-            "{0} -s {1} shell input swipe {2} {3} {4} {5} {6}".format(_get_adb_location(), device_identifier,
-                                                                      str(start_x),
-                                                                      str(start_y), str(end_x),
-                                                                      str(end_y), duration))
-
-
-'''
-Simulates a tap on a given device at coordinates
-'''
-def tap(tap_x, tap_y, device_identifier=None):
-    if device_identifier is None:
-        _call_subprocess_with_no_window(
-            "{0} shell input tap {1} {2}".format(_get_adb_location(), str(tap_x),
-                                                 str(tap_y)))
-    else:
-        _call_subprocess_with_no_window(
-            "{0} -s {1} shell input tap {2} {3}".format(_get_adb_location(), device_identifier, str(tap_x),
-                                                        str(tap_y)))
 
 '''
 Returns a tuple with an x and a y coordinate of the element containing the target text in the provided string.
@@ -113,18 +84,6 @@ def get_coordinates_of_element_from_text(layout_string, target):
 
     return [click_x, click_y]
 
-'''
-Simulates pressing of the back button on a device
-'''
-#TODO move this function to be with the other input simulation functions
-def back(device_id=None):
-    _call_subprocess_with_no_window(_get_input_key_event_string(4, device_id))
-
-'''
-Simulates the pressing of the Home button on a device
-'''
-def home(device_id=None):
-    _call_subprocess_with_no_window(_get_input_key_event_string(3, device_id))
 
 
 '''
@@ -233,13 +192,6 @@ def _get_current_activity_string(device_id=None):
         if "Run #" in stripped_line:
             return stripped_line.split("/")[1].split(" ")[0]
 
-'''
-Closes the currently opened application on the specified device
-'''
-def kill_current_application(device_id=None):
-    _call_subprocess_with_no_window("{0} -s {1} shell am force-stop {2}".format(_get_adb_location(), device_id,
-                                                                                get_current_application_package(
-                                                                                    device_id)))
 
 '''
 Closes the specified application on the specified device
@@ -258,20 +210,6 @@ def launch_application(application_name, device_id=None):
     else:
         _call_subprocess_with_no_window(
             "{0} -s {1} shell monkey -p {2} 1".format(_get_adb_location(), device_id, application_name))
-
-'''
-Returns a string which is the package name of the current application open on the specified device
-'''
-def get_current_application_package(device_id=None):
-    if device_id is None:
-        dumpsys_output = str(
-            _call_subprocess_with_no_window("{0} shell dumpsys window windows".format(_get_adb_location())))
-    else:
-        dumpsys_output = str(
-            _call_subprocess_with_no_window("{0} -s {1} shell dumpsys window windows".format(_get_adb_location(),
-                                                                                             device_id)))
-    return dumpsys_output.split("mCurrentFocus")[-1].split("/")[0].split(" ")[-1]
-
 
 '''
 Returns a list of strings with device ids of connected devices
